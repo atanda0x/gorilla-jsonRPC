@@ -2,6 +2,7 @@ package main
 
 import (
 	jsonparse "encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,38 +15,40 @@ import (
 
 // Args holds arguments passed to JSON RPC service
 type Args struct {
-	Id string
+	Name string
 }
 
-// Book struct holds Book JSON structure
-type Book struct {
-	Id     string `json:"string,omitempty"`
-	Name   string `json:"name,omitempty"`
-	Author string `json:"author,omitempty"`
+// TwitterProfie struct holds TwitterProfile JSON structure
+type TwitterProfile struct {
+	Name      string `json:"name,omitempty"`
+	Username  string `json:"username,omitempty"`
+	Followers string `json:"followers,omitempty"`
+	Following string `json:"following,omitempty"`
 }
 
 type JSONServer struct{}
 
-// GiveBookDetail
-func (t *JSONServer) GiveBookDetail(r *http.Request, args *Args, reply *Book) error {
-	var books []Book
+// TwitterProfileDetail
+func (t *JSONServer) TwitterProfileDetail(r *http.Request, args *Args, reply *TwitterProfile) error {
+	var twitterprofiles []TwitterProfile
 	// Read JSON file and load data
-	raw, readerr := ioutil.ReadFile("./books.json")
+	raw, readerr := ioutil.ReadFile("./twitterprofile.json")
 	if readerr != nil {
 		log.Println("error:", readerr)
 		os.Exit(1)
 	}
-	// Unmarshal JSON raw data into books array
-	marshalerr := jsonparse.Unmarshal(raw, &books)
+	// Unmarshal JSON raw data into twitterprofiles array
+	marshalerr := jsonparse.Unmarshal(raw, &twitterprofiles)
 	if marshalerr != nil {
 		log.Println("error:", marshalerr)
 		os.Exit(1)
 	}
-	// Iterate over each book to find the given book
-	for _, book := range books {
-		if book.Id == args.Id {
-			// If book found, fill reply with it
-			*reply = book
+	// Iterate over each twitterprofile to find the given twitterprofile
+	for _, twitterprofile := range twitterprofiles {
+		if twitterprofile.Name == args.Name {
+			// If twitterprofile found, fill reply with it
+			fmt.Println(twitterprofile)
+			*reply = twitterprofile
 			break
 		}
 	}
